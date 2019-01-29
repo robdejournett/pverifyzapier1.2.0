@@ -1,10 +1,10 @@
 {
-  "name": "zapier-platform-example-app-minimal",
-  "version": "1.0.0",
-  "description": "An example app for the Zapier platform.",
-  "repository": "zapier/zapier-platform-example-app-minimal",
+  "name": "pVerifyEligibilityInquiry",
+  "version": "1.0.9",
+  "description": "pVerify Eligibility Inquiry call",
+  "repository": "https://github.com/robdejournett/pverify-zapier",
   "homepage": "https://zapier.com/",
-  "author": "Bryan Helmig <bryan@zapier.com>",
+  "author": "Rob Dejournett <rob.dejournett@pverify.com> and Logan Pratico <logan@pverify.com>",
   "license": "BSD-3-Clause",
   "main": "index.js",
   "scripts": {
