@@ -31,14 +31,13 @@ module.exports = {
       {key: 'dependentGender', required: false, type: 'string'},
       {key: 'relationWSubscriber', required: false, type: 'string'},
       {key: 'isSubscriberPatient', required: true, type: 'string'},
-      {key: 'DOS_StartDate', required: true, type: 'string'},
-      {key: 'DOS_EndDate', required: true, type: 'string'},
+      {key: 'DOS', label: 'Date of Service', required: true, type: 'string'},
       {key: 'serviceCodes', required: true, type: 'string'}
     ],
     perform: (z, bundle) => {
       const promise = z.request({
-        //url: 'https://api.pverify.com/API/EligibilityInquiry',
-	url: 'https://api.pverify.com:9003',
+        url: 'https://api.pverify.com/API/EligibilityInquiry',
+	//url: 'https://api.pverify.com:9003',
         method: 'POST',
         body: JSON.stringify({
           payerCode: bundle.inputData.payerCode,
@@ -66,9 +65,10 @@ module.exports = {
 		relationWithSubscriber: bundle.inputData.relationWSubscriber
 	},
 	isSubscriberPatient: bundle.inputData.isSubscriberPatient,
-	doS_StartDate: bundle.inputData.DOS_StartDate,
-	doS_EndDate: bundle.inputData.DOS_EndDate,
-	serviceCodes: [bundle.inputData.serviceCodes]
+	doS_StartDate: bundle.inputData.DOS,
+	doS_EndDate: bundle.inputData.DOS,
+	serviceCodes: [bundle.inputData.serviceCodes],
+	requestSource: 'Zapier'
         }),
         headers: {
           'content-type': 'application/json',

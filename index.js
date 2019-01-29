@@ -1,20 +1,8 @@
 const recipe = require('./creates/recipe');
-//const authentication = require('./authentication');
-const auth_it = {
-  type: 'digest',
-  // "test" could also be a function
-  test: {
-    url: 'https://example.com/api/accounts/me.json'
-  },
-  connectionLabel: '{{bundle.authData.username}}' // Can also be a function, check digest auth below for an example
-  // you can provide additional fields, but we'll provide `username`/`password` automatically
-};
-
-const auth_it_2 = {
-  type: 'custom',
-  // "test" could also be a function
-  test: {
-    url:
+const getSessionKey = (z, bundle) => {
+	// this is successfully passing in user/password and should work
+  const promise = z.request({
+   url:
       'https://api.pverify.com/Token',
       method: 'POST',
       body: 'username={{bundle.authData.username}}&password={{bundle.authData.password}}&grant_type=password',
@@ -22,38 +10,75 @@ const auth_it_2 = {
          'content-type': 'application/x-www-form-urlencoded'
       }
 
+  });
+
+  return promise.then(response => {
+    if (response.status === 401) {
+      throw new Error('The username/password you supplied is invalid');
+    }
+    return {
+      sessionKey: z.JSON.parse(response.content).access_token
+    };
+  });
+};
+
+const authentication = {
+  type: 'session',
+  // "test" could also be a function
+	// This is passing user/pass and should work
+  test: {
+	   url:
+      'https://api.pverify.com/Token',
+      method: 'POST',
+      body: 'username={{bundle.authData.username}}&password={{bundle.authData.password}}&grant_type=password',
+      headers: {
+         'content-type': 'application/x-www-form-urlencoded',
+	      'sent-from':'authentication'
+      }
+
   },
+
   fields: [
     {
       key: 'username',
       type: 'string',
       required: true,
-      helpText: 'Username from pVerify'
+      helpText: 'Your login username.'
     },
     {
       key: 'password',
       type: 'string',
       required: true,
-      helpText: 'password from pVerify for API'
+      helpText: 'Your login password.'
     }
-  ]
+    // For Session Auth we store `sessionKey` automatically in `bundle.authData`
+    // for future use. If you need to save/use something that the user shouldn't
+    // need to type/choose, add a "computed" field, like:
+    // {key: 'something': type: 'string', required: false, computed: true}
+    // And remember to return it in sessionConfig.perform
+  ],
+  sessionConfig: {
+    perform: getSessionKey
+  }
 };
 
-const addApiKeyToHeader = (request, z, bundle) => {
-  //request.headers['X-Subdomain'] = bundle.authData.subdomain;
-  //const basicHash = Buffer(`${bundle.authData.api_key}:x`).toString('base64');
-  //request.headers.Authorization = `Basic ${basicHash}`;
-  request.headers.Authorization = "Bearer " + Buffer(`${bundle.authData.access_token}:x`);
-	
+const includeSessionKeyHeader = (request, z, bundle) => {
+  request.headers['Authorization'] = "Bearer " + bundle.authData.sessionKey;
   request.headers['Client-User-Name'] = bundle.authData.username;
-  request.headers['foo'] = "bar";
+
   return request;
 };
 
-// We can roll up all our behaviors in an App.
+const sessionRefreshIf401 = (response, z, bundle) => {
+  if (bundle.authData.sessionKey) {
+    if (response.status === 401) {
+      throw new z.errors.RefreshAuthError(); // ask for a refresh & retry
+    }
+  }
+  return response;
+};
 
-// To include the API key on all outbound requests, simply define a function here.
-// It runs runs before each request is sent out, allowing you to make tweaks to the request in a centralized spot.
+
 
 const App = {
   // This is just shorthand to reference the installed dependencies you have. Zapier will
@@ -61,17 +86,11 @@ const App = {
   version: require('./package.json').version,
   platformVersion: require('zapier-platform-core').version,
 
-  authentication: auth_it_2,
+  authentication: authentication,
 
   // beforeRequest & afterResponse are optional hooks into the provided HTTP client
-  beforeRequest: [
-    addApiKeyToHeader
-  ],
-
-
-  afterResponse: [
-  ],
-
+  beforeRequest: [includeSessionKeyHeader],
+  afterResponse: [sessionRefreshIf401],
   // If you want to define optional resources to simplify creation of triggers, searches, creates - do that here!
   resources: {
   },
