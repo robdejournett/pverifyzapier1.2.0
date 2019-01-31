@@ -1,0 +1,45 @@
+// We recommend writing your creates separate like this and rolling them
+// into the App definition at the end.
+module.exports = {
+  key: 'GetEligibilityResponse',
+
+  // You'll want to provide some helpful display labels and descriptions
+  // for users. Zapier will put them into the UX.
+  noun: 'GetEligibilityResponse',
+  display: {
+    label: 'Call GetEligibilityResponse',
+    description: 'Get previously generated eligiblity data from pVerify.'
+  },
+
+  // `operation` is where the business logic goes.
+  operation: {
+    inputFields: [
+      {key: 'elgRequestID', required: true, type: 'string'},
+    ],
+    outputFields: [
+      {key: 'status', label: 'xCoverage Status',type: 'string'},
+      {key: 'demographicInfo__subscriber__firstname', label: 'xSubscriber First Name',type: 'string'},
+      {key: 'networkSections[]identifier', label: 'xNetworkSectionsId',type: 'string'},
+      {key: 'networkSections[]inNetworkParameters[]key', label: 'xNetworkSectionsKey',type: 'string'},
+      {key: 'networkSections[]inNetworkParameters[]value', label: 'xNetworkSectionsValue',type: 'string'}
+
+
+    ], 
+    perform: (z, bundle) => {
+      const promise = z.request({
+        url: 'https://api.pverify.com/API/GetEligibilityResponse/' + bundle.inputData.elgRequestID,
+	//url: 'https://api.pverify.com:9003',
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+        }
+      });
+      var resp =  promise.then((response) => response.content);
+      resp.xNewField = "Bar";
+    
+      return JSON.parse(resp);
+      //return promise.then((response) => JSON.parse(response.content));
+    },
+
+  }
+};

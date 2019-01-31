@@ -1,4 +1,6 @@
-const recipe = require('./creates/recipe');
+const eligibilityInquiry = require('./creates/eligibilityInquiry');
+const getEligibilityResponse = require('./creates/getEligibilityResponse');
+
 const getSessionKey = (z, bundle) => {
 	// this is successfully passing in user/password and should work
   const promise = z.request({
@@ -105,7 +107,10 @@ const App = {
 
   // If you want your creates to show up, you better include it here!
   creates: {
-     [recipe.key]: recipe
+    //j [recipe.key]: eligibilityInquiry,
+     [eligibilityInquiry.key]: eligibilityInquiry,
+     [getEligibilityResponse.key]: getEligibilityResponse
+     //[recipe.key]: getEligibilityResponse
   }
 
 };

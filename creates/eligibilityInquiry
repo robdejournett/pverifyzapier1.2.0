@@ -1,7 +1,7 @@
 // We recommend writing your creates separate like this and rolling them
 // into the App definition at the end.
 module.exports = {
-  key: 'recipe',
+  key: 'EligibilityInquiry',
 
   // You'll want to provide some helpful display labels and descriptions
   // for users. Zapier will put them into the UX.
@@ -34,6 +34,12 @@ module.exports = {
       {key: 'DOS', label: 'Date of Service', required: true, type: 'string'},
       {key: 'serviceCodes', required: true, type: 'string'}
     ],
+    outputFields: [
+      {key: 'status', label: 'Coverage Status',type: 'string'},
+      {key: 'demographicInfo__subscriber__firstname', label: 'xSubscriber First Name',type: 'string'}
+
+
+    ], 
     perform: (z, bundle) => {
       const promise = z.request({
         url: 'https://api.pverify.com/API/EligibilityInquiry',
@@ -74,8 +80,11 @@ module.exports = {
           'content-type': 'application/json',
         }
       });
-
-      return promise.then((response) => JSON.parse(response.content));
+      var resp =  promise.then((response) => JSON.parse(response.content));
+      resp.foo = "bar";
+      resp.elgRequestID = "testing123";
+      return resp;
+      //return promise.then((response) => JSON.parse(response.content));
     },
 
   }
