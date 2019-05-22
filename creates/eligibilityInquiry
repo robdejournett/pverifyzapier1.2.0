@@ -32,7 +32,12 @@ module.exports = {
       {key: 'relationWSubscriber', required: false, type: 'string'},
       {key: 'isSubscriberPatient', required: true, type: 'string'},
       {key: 'DOS', label: 'Date of Service', required: true, type: 'string'},
-      {key: 'serviceCodes', required: true, type: 'string'}
+      {key: 'serviceCodes', required: true, type: 'string'},
+      {key: 'isHMOplan', required: false, type: 'boolean'},
+      {key: 'IncludeTextResponse', required: false, type: 'boolean'},
+      {key: 'referenceId', required: false, type: 'string'},
+      {key: 'Location', required: false, type: 'string'}
+	  
     ],
     outputFields: [
       {key: 'status', label: 'Coverage Status',type: 'string'},
@@ -74,7 +79,11 @@ module.exports = {
 	doS_StartDate: bundle.inputData.DOS,
 	doS_EndDate: bundle.inputData.DOS,
 	serviceCodes: [bundle.inputData.serviceCodes],
-	requestSource: 'Zapier'
+	requestSource: 'Zapier',
+	isHMOplan: bundle.inputData.isHMOplan,
+	IncludeTextResponse: bundle.inputData.IncludeTextResponse,
+	referenceId: bundle.inputData.referenceId,
+	Location: bundle.inputData.Location
         }),
         headers: {
           'content-type': 'application/json',

@@ -1,5 +1,7 @@
 const eligibilityInquiry = require('./creates/eligibilityInquiry');
 const getEligibilityResponse = require('./creates/getEligibilityResponse');
+const easyEligibility = require('./creates/easyEligibility'); 
+const eligibilitySummary = require('./creates/eligibilitySummary');
 
 const getSessionKey = (z, bundle) => {
 	// this is successfully passing in user/password and should work
@@ -109,7 +111,9 @@ const App = {
   creates: {
     //j [recipe.key]: eligibilityInquiry,
      [eligibilityInquiry.key]: eligibilityInquiry,
-     [getEligibilityResponse.key]: getEligibilityResponse
+     [getEligibilityResponse.key]: getEligibilityResponse,
+     [easyEligibility.key]: easyEligibility,
+     [eligibilitySummary.key]: eligibilitySummary
      //[recipe.key]: getEligibilityResponse
   }
 
