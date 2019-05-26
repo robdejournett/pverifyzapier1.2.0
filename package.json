@@ -1,6 +1,6 @@
 {
   "name": "pVerifyEligibilityInquiry",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "pVerify Eligibility Inquiry call",
   "repository": "https://github.com/robdejournett/pverify-zapier",
   "homepage": "https://zapier.com/",
@@ -15,7 +15,7 @@
     "npm": ">=5.6.0"
   },
   "dependencies": {
-    "zapier-platform-core": "7.6.1"
+    "zapier-platform-core": "8.1.0"
   },
   "devDependencies": {
     "mocha": "^5.2.0",
